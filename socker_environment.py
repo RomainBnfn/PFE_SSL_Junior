@@ -1,40 +1,30 @@
 import gym
 from gym import spaces
+from PygameRender import PygameRender
 
 class SockerEnvironement(gym.Env):
-  """SSL Socker Junior Env"""
-  
-  metadata = {'render.modes': ['human']}
-
-  def __init__(self, width, height, x, y):
-      """[summary]
-
-      Args:
-          width ([float]): Width of the field (x)
-          height ([float]): Height of the field (y)
-          x ([float]): [description]
-          y ([float]): [description]
-      """
-    super(SSLSockerEnvironement, self).__init__()
-    # Define action and observation space
-    # They must be gym.spaces objects
-    # Example when using discrete actions:
-    self.action_space = spaces.Discrete(N_DISCRETE_ACTIONS)
-    # Example for using image as input:
-    self.observation_space = spaces.Box(low=0, high=255, shape=
-                    (HEIGHT, WIDTH, N_CHANNELS), dtype=np.uint8)
-
-  def step(self, action):
-    # Execute one time step within the environment
-    ...
-  def reset(self):
-    # Reset the state of the environment to an initial state
-    ...
-  def render(self, mode='human', close=False):
-    # Render the environment to the screen
-    ...
+    """SSL Socker Junior Env"""
+    metadata = {'render.modes': ['human']}
+    def __init__(self, width, height, x, y):
+        super(SSLSockerEnvironement, self).__init__()
+        # Actions of robots : [x1 y1 o1 kick1, x2, y2, o2, kick2]
+        self.action_space = spaces.Discrete(N_DISCRETE_ACTIONS)
+        # Example for using image as input:
+        self.observation_space = spaces.Box(low=0, high=255, shape=
+                        (HEIGHT, WIDTH, N_CHANNELS), dtype=np.uint8)
+        #
+        self.field = Field(w, h, a, b)
+        self.pygameRender = PygameRender()
+        
+    def step(self, action):
+        return self.field.step(action, t)
+        
+    def reset(self):
+        self.field.reset()
     
-
+    def render(self, mode='human', close=False):
+        self.pygameRender.render(self.field)
+    
 class Movable:
     def __init__(self, x, y, o, ddX, ddY, ddO, weight):
         self.reset(x, y, o, ddX, ddY, ddO)
@@ -58,22 +48,28 @@ class Field:
         self.ball = Ball(0, 0)
         self.ended = False
     
-    def reset():
-        self.ball.reset(0, 0, 0, 0, 0, 0)
-        self.redTeam[0].reset()
-        self.redTeam[1].reset()
-        self.blueTeam[2].reset()
-        self.redTeam[3].reset()
+    def reset(mode='classic'):
+        if mode == 'classic':
+            a =
+            b =
+            self.ball.reset(0, 0, 0, 0, 0, 0)
+            self.redTeam[0].reset(a, b, 180)
+            self.redTeam[1].reset(a, -b, 180)
+            self.blueTeam[0].reset(-a, b, 0)
+            self.blueTeam[1].reset(-a, -b, 0)
         
-    def step(actions):
-        # --> Return obs, reward, done?, infos
+    def step(actions, t):
+        # Execute one time step within the environment
+        (dx1, dy1, do1, kick1, dx2, dy2, do2, kick2) = action
+        # update directive
+        return obs, reward, done, infos
         
     def render():
         pass
         
 class Robot(Movable):
     def __init__(self, x, y, o):
-        super().__init__(x, y, o, 0, 0, 0, 30)
+        super().__init__(x, y, o, 0, 0, 0, 250)
         print(self.x)
 
 class Ball(Movable):
@@ -81,5 +77,3 @@ class Ball(Movable):
         super().__init__(x, y, 0, 0, 0, 0, 10)
         print(self.x)
 )
-env = Field(300, 300)
-env.reset()
