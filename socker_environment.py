@@ -9,6 +9,8 @@ class SockerEnvironement(gym.Env):
     """SSL Socker Junior Env"""
     metadata = {'render.modes': ['human']}
     def __init__(self):
+        self.team = "blue" # TODO !!!
+        
         super(SockerEnvironement, self).__init__()
         # Actions of robots : [x1 y1 o1 kick1, x2, y2, o2, kick2]
         low_action = [-MAX_SPEED, -MAX_SPEED, -MAX_ANGULAR_SPEED, 0]
@@ -29,10 +31,10 @@ class SockerEnvironement(gym.Env):
         self.field = Field()
         self._sockerRender = None
         
-    def step(self, action):
-        self.field.step(action, t)
+    def step(self, actions):
+        self.field.step(actions, self.team)
         # Calculation to do here
-        return obs, reward, done, infos
+        #return obs, reward, done, infos
         
     def reset(self):
         self.field.reset('classic')
@@ -48,8 +50,9 @@ class SockerEnvironement(gym.Env):
     
 test = SockerEnvironement()
 import time
-for i in range(500):
+test.field.robots[0].coord = (-200, 0, 0)
+for i in range(100):
     test.render()
-    (a, b, c) = test.field.robots[1].coord
-    test.field.robots[1].coord = (a-2, b+1, c+2)
-    time.sleep(0.01)
+    test.step( [200, 0, 0, 0,
+                0, 0, 0, 0] )
+    time.sleep(TIME_STEP)

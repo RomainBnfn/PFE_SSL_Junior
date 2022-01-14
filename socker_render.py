@@ -3,11 +3,11 @@ from math import cos, sin, radians
 from socker_constants import *
 
 RATIO_MM_PIXEL = FIELD_HEIGHT/(SCREEN_WIDTH-BORDER)
-def fromMMtoPixel(x, y):  
+def fromMMtoPixel_coord(x, y):  
     return -y / RATIO_MM_PIXEL + SCREEN_WIDTH/2, -x/ RATIO_MM_PIXEL + SCREEN_HEIGHT/2 
-
 def fromMMtoPixel_dist(d):
     return d / RATIO_MM_PIXEL 
+
 class SockerRender:
     def __init__(self):
         pygame.init()
@@ -46,11 +46,11 @@ class SockerRender:
         pygame.display.update()
 
     def display_ball(self, x, y):
-        x_render, y_render = fromMMtoPixel(x,y)
+        x_render, y_render = fromMMtoPixel_coord(x,y)
         pygame.draw.circle(self.screen, (255, 255, 0), (x_render, y_render), BALL_SIZE/2)
     
     def display_robot(self, x, y, o, color, number):
-        x_render, y_render = fromMMtoPixel(x,y) # coordonate
+        x_render, y_render = fromMMtoPixel_coord(x,y) # coordonate
         (color, image) = self.colorImageDic.get((color, number))
         #
         image = pygame.transform.rotate(image, o)
