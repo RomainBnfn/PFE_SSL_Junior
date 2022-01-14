@@ -1,79 +1,55 @@
 import gym
 from gym import spaces
-from PygameRender import PygameRender
+from socker_constants import *
+from socker_render import SockerRender
+from socker_field import Field
+import numpy as np
 
 class SockerEnvironement(gym.Env):
     """SSL Socker Junior Env"""
     metadata = {'render.modes': ['human']}
-    def __init__(self, width, height, x, y):
-        super(SSLSockerEnvironement, self).__init__()
+    def __init__(self):
+        super(SockerEnvironement, self).__init__()
         # Actions of robots : [x1 y1 o1 kick1, x2, y2, o2, kick2]
-        self.action_space = spaces.Discrete(N_DISCRETE_ACTIONS)
-        # Example for using image as input:
-        self.observation_space = spaces.Box(low=0, high=255, shape=
-                        (HEIGHT, WIDTH, N_CHANNELS), dtype=np.uint8)
-        #
-        self.field = Field(w, h, a, b)
-        self.pygameRender = PygameRender()
+        low_action = [-MAX_SPEED, -MAX_SPEED, -MAX_ANGULAR_SPEED, 0]
+        high_action = [MAX_SPEED, MAX_SPEED, MAX_ANGULAR_SPEED, 1]
+        self.action_space = spaces.Box(shape=(2,4), 
+                                       low=np.array([low_action, low_action]), 
+                                       high=np.array([high_action, high_action]), 
+                                       dtype=np.float32)
+        # Observations : [x, y, o, °x, ..., °°x, ...] Ball, Robot1, ...
+        ball_low_observation = [-FIELD_WIDTH/2, -FIELD_HEIGHT/2, 0, -MAX_BALL_SPEED, -MAX_BALL_SPEED, 0, -999,-999, 0]
+        ball_high_observation = [FIELD_WIDTH/2, FIELD_HEIGHT/2, 0, MAX_BALL_SPEED, MAX_BALL_SPEED, 0, 999,999, 0]
+        robot_low_observation = [-FIELD_WIDTH/2+ROBOT_SIZE/2, -FIELD_HEIGHT/2+ROBOT_SIZE/2, -180, -MAX_SPEED, -MAX_SPEED, -MAX_ANGULAR_SPEED, -999,-999, -999]
+        robot_high_observation = [FIELD_WIDTH/2-ROBOT_SIZE/2, FIELD_HEIGHT/2-ROBOT_SIZE/2, 180, MAX_SPEED, MAX_SPEED, MAX_ANGULAR_SPEED, 999, 999, 999]
+        self.observation_sace = spaces.Box(shape=(5,9), 
+                                           low=np.array([ball_low_observation, robot_low_observation, robot_low_observation, robot_low_observation, robot_low_observation]),
+                                           high=np.array([ball_high_observation, robot_high_observation, robot_high_observation, robot_high_observation, robot_high_observation]),
+                                           dtype=np.float32)
+        self.field = Field()
+        self._sockerRender = None
         
     def step(self, action):
-        return self.field.step(action, t)
-        
-    def reset(self):
-        self.field.reset()
-    
-    def render(self, mode='human', close=False):
-        self.pygameRender.render(self.field)
-    
-class Movable:
-    def __init__(self, x, y, o, ddX, ddY, ddO, weight):
-        self.reset(x, y, o, ddX, ddY, ddO)
-        self.weight = weight
-        
-    def move(t, dX, dY, dO, r): #r : rugosite ?
-        # Caculate new x, y, o, ddx, ddy, ddo
-        return x, y, o
-    
-    def reset(x, y, o, ddX, ddY, ddO):
-        self.coord = (x, y, o)
-        self.acceleration = (ddX, ddY, ddO)
-    
-class Field:
-    def __init__(self, width, height, a, b):
-        self.width = width
-        self.height = height
-        # robot weight
-        self.redTeam = [Robot(a, b, 180), Robot(a, -b, 180)]
-        self.blueTeam = [Robot(-a, b, 0), Robot(-a, -b, 0)]
-        self.ball = Ball(0, 0)
-        self.ended = False
-    
-    def reset(mode='classic'):
-        if mode == 'classic':
-            a =
-            b =
-            self.ball.reset(0, 0, 0, 0, 0, 0)
-            self.redTeam[0].reset(a, b, 180)
-            self.redTeam[1].reset(a, -b, 180)
-            self.blueTeam[0].reset(-a, b, 0)
-            self.blueTeam[1].reset(-a, -b, 0)
-        
-    def step(actions, t):
-        # Execute one time step within the environment
-        (dx1, dy1, do1, kick1, dx2, dy2, do2, kick2) = action
-        # update directive
+        self.field.step(action, t)
+        # Calculation to do here
         return obs, reward, done, infos
         
-    def render():
-        pass
-        
-class Robot(Movable):
-    def __init__(self, x, y, o):
-        super().__init__(x, y, o, 0, 0, 0, 250)
-        print(self.x)
-
-class Ball(Movable):
-    def __init__(self, x, y):
-        super().__init__(x, y, 0, 0, 0, 0, 10)
-        print(self.x)
-)
+    def reset(self):
+        self.field.reset('classic')
+    
+    def render(self, mode='human', close=False):
+        self.sockerRender.render(self.field)
+    
+    @property
+    def sockerRender(self):
+        if self._sockerRender is None:
+            self._sockerRender = SockerRender()
+        return self._sockerRender
+    
+test = SockerEnvironement()
+import time
+for i in range(500):
+    test.render()
+    (a, b, c) = test.field.robots[1].coord
+    test.field.robots[1].coord = (a-2, b+1, c+2)
+    time.sleep(0.01)
