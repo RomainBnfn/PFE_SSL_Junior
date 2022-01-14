@@ -32,9 +32,7 @@ class SockerEnvironement(gym.Env):
         self._sockerRender = None
         
     def step(self, actions):
-        self.field.step(actions, self.team)
-        # Calculation to do here
-        #return obs, reward, done, infos
+        return self.field.step(actions, self.team)
         
     def reset(self):
         self.field.reset('classic')
@@ -50,9 +48,12 @@ class SockerEnvironement(gym.Env):
     
 test = SockerEnvironement()
 import time
-test.field.robots[0].coord = (-200, 0, 0)
-for i in range(100):
+test.field.robots[0].coord = (0, -FIELD_HEIGHT/2, 0)
+test.field.ball.coord = (0, -FIELD_HEIGHT/2, 0)
+done = False
+while not done:
     test.render()
-    test.step( [200, 0, 0, 0,
-                0, 0, 0, 0] )
+    obs, reward, done, _ = test.step( [200, 0, 0, 0,
+                                    0, 0, 0, 0] )
+    print(done)
     time.sleep(TIME_STEP)

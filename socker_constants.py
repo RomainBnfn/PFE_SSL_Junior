@@ -1,5 +1,11 @@
 from math import atan, degrees
 
+# REWARD CONSTANT
+STEP_REWARD = -1
+COLLISION_REWARD = -30
+TROUGHT_BALL_OUT_REWARD = -50
+WIN_REWARD = 300
+
 # Constants
 # Mesures done on PDF
 FIELD_WIDTH, FIELD_HEIGHT = 1800 , 1200 #mm

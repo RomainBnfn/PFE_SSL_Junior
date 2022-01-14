@@ -8,7 +8,13 @@ class Movable:
         self.actualSpeed = (dX, dY, dO)
         self.acceleration = (ddX, ddY, ddO)
         self.weight = weight
-        
+    
+    def obs(self):
+        (x, y, o) = self.coord
+        (dX, dY, dO) = self.actualSpeed
+        (aX, aY, aO) = self.acceleration
+        return [x, y, o, dX, dY, dO, aX, aY, aO]
+    
     def generic_move(self, obj_dX, obj_dY, obj_dO, weight, isRobot):
         # dX, dY and dO are the objective speed
         dt = TIME_STEP
@@ -52,7 +58,18 @@ class Movable:
 class Field:
     def __init__(self):
         self.reset("classic")
+        self.last_robot_touch_ball = None
     
+    def __str__(self):
+        text = "FIELD DESCRIPTION \n"
+        text += "Ball: \n" + self.ball.obs()
+        text += "Blue team : \n"
+        text += "Robot 1: \n " + self.robots[0].obs()
+        text += "Robot 2: \n " + self.robots[1].obs()
+        text += "Red team : \n"
+        text += "Robot 1: \n " + self.robots[2].obs()
+        text += "Robot 2: \n " + self.robots[3].obs()
+        
     def reset(self, mode='classic'):
         if mode == 'classic':
             self.robots = [Robot(X_POS, Y_POS, 180, 'blue', 1), 
@@ -89,6 +106,34 @@ class Field:
         y2 += dy * s
         return x1, y1, x2, y2
     
+    def is_ball_out(self):
+        (x, y, o) = self.ball.coord
+        return (x < -FIELD_WIDTH/2
+                or x > FIELD_WIDTH/2
+                or y < -FIELD_HEIGHT/2
+                or y > FIELD_HEIGHT/2)
+    
+    def is_finished(self):
+        (x, y, o) = self.ball.coord
+        return (
+            (x < -FIELD_WIDTH/2 or x > FIELD_WIDTH/2)
+                and y > Y_BUT-FIELD_HEIGHT/2  and y < FIELD_HEIGHT/2-Y_BUT ) # ball out of the field in one cage
+            
+    def obs(self):
+        return [self.robots[0].obs(),
+                self.robots[1].obs(),
+                self.robots[2].obs(),
+                self.robots[3].obs(),
+                self.ball.obs()]
+        
+    def get_winner(self):
+        if not self.is_finished():
+            return None
+        # blue team have to mark on bot size x < 0 and red on top size x > 0
+        if x < 0:
+            return "blue"
+        return "red"
+        
     def step(self, actions, team):
         # Execute one time step within the environment
         (dx1, dy1, do1, kick1, dx2, dy2, do2, kick2) = actions
@@ -131,6 +176,8 @@ class Field:
                 # If the ball reach the front part of the robot it will be pushed by it
                 # So we have to determine where the ball hit the robot.
                 # Lets moove on the robot base
+                self.last_robot_touch_ball = robot
+                #
                 (_x1, _y1, _o1) = 0, 0, 0
                 (_x, _y, _o) = (x-x1, y-y1, o-o1)
                 angle = degrees(atan(_y/_x))
@@ -152,8 +199,18 @@ class Field:
                     (dX, dY, dO) = self.ball.actualSpeed # direction
                 
                 break
-                    
-        #return obv...
+        # Ball is out of field ?
+        out = 0
+        if self.is_ball_out():
+            # RESET
+            if self.last_robot_touch_ball.color == team:
+                out = 1
+            self.reset('classic')
+        # Results
+        observation = self.obs()
+        reward = STEP_REWARD + collision * COLLISION_REWARD + out * TROUGHT_BALL_OUT_REWARD 
+        done = self.is_finished()
+        return observation, reward, done, self
         
 class Robot(Movable):
     def __init__(self, x, y, o, color, number):
