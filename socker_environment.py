@@ -8,10 +8,10 @@ import numpy as np
 class SockerEnvironement(gym.Env):
     """SSL Socker Junior Env"""
     metadata = {'render.modes': ['human']}
-    def __init__(self):
-        self.team = "blue" # TODO !!!
-        
+    def __init__(self, team):
+        self.team = team
         super(SockerEnvironement, self).__init__()
+        
         # Actions of robots : [x1 y1 o1 kick1, x2, y2, o2, kick2]
         low_action = [-MAX_SPEED, -MAX_SPEED, -MAX_ANGULAR_SPEED, 0]
         high_action = [MAX_SPEED, MAX_SPEED, MAX_ANGULAR_SPEED, 1]
@@ -19,7 +19,8 @@ class SockerEnvironement(gym.Env):
                                        low=np.array([low_action, low_action]), 
                                        high=np.array([high_action, high_action]), 
                                        dtype=np.float32)
-        # Observations : [x, y, o, °x, ..., °°x, ...] Ball, Robot1, ...
+        # Observations : [x, y, o, °x, ..., °°x, ...] 
+        #   Ball, Robot1 (ally), Robot2 (ally), Robot 1(ennemy)...
         ball_low_observation = [-FIELD_WIDTH/2, -FIELD_HEIGHT/2, 0, -MAX_BALL_SPEED, -MAX_BALL_SPEED, 0, -999,-999, 0]
         ball_high_observation = [FIELD_WIDTH/2, FIELD_HEIGHT/2, 0, MAX_BALL_SPEED, MAX_BALL_SPEED, 0, 999,999, 0]
         robot_low_observation = [-FIELD_WIDTH/2+ROBOT_SIZE/2, -FIELD_HEIGHT/2+ROBOT_SIZE/2, -180, -MAX_SPEED, -MAX_SPEED, -MAX_ANGULAR_SPEED, -999,-999, -999]
@@ -46,14 +47,12 @@ class SockerEnvironement(gym.Env):
             self._sockerRender = SockerRender()
         return self._sockerRender
     
-test = SockerEnvironement()
+test = SockerEnvironement('blue')
+test.field.ball.actualSpeed = (200, 100, 180)
 import time
-test.field.robots[0].coord = (0, -FIELD_HEIGHT/2, 0)
-test.field.ball.coord = (0, -FIELD_HEIGHT/2, 0)
 done = False
-while not done:
+for i in range(60):
     test.render()
-    obs, reward, done, _ = test.step( [200, 0, 0, 0,
-                                    0, 0, 0, 0] )
-    print(done)
+    obs, reward, done, _ = test.step( [0, 0, 0, 0,
+                                        0, 0, 0, 0] )
     time.sleep(TIME_STEP)

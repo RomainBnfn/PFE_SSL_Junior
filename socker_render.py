@@ -65,7 +65,8 @@ class SockerRender:
                           y_render + sin(angle) * radius * 0.6 )
         pygame.draw.circle(self.screen, (255, 255, 255), (x_ind, y_ind), 4)
         
-        # Draw the kicker of robots --> TODO : Kicker movement
+        # Draw the kicker of robots 
+        # --> TODO : Kicker movement
         angle = o-180
         o1 = radians(KICKER_O1 - angle)
         o2 = radians(KICKER_O2 - angle)

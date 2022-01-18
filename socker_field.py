@@ -1,18 +1,32 @@
 from socker_render import SockerRender
 from socker_constants import *
 from math import dist, atan, degrees, cos, sin
+import numpy as np
 
+def get_red_pos(x, y, o):
+    return FIELD_WIDTH/2-x, FIELD_HEIGHT/2-y, -o
+    
+def get_red_speed(dX, dY, dO):
+    return -dX, -dY, -dO
+    
+def get_red_acceleration(aX, aY, aO):
+    return -aX, -aY, -aO
+    
 class Movable:
-    def __init__(self, x, y, o, dX, dY, dO, ddX, ddY, ddO, weight):
+    def __init__(self, x, y, o, dX, dY, dO, aX, aY, aO, weight):
         self.coord = (x, y, o)
         self.actualSpeed = (dX, dY, dO)
-        self.acceleration = (ddX, ddY, ddO)
+        self.acceleration = (aX, aY, aO)
         self.weight = weight
     
-    def obs(self):
+    def obs(self, team):
         (x, y, o) = self.coord
         (dX, dY, dO) = self.actualSpeed
         (aX, aY, aO) = self.acceleration
+        if team == 'red':
+            (x, y, o) = get_red_pos(x, y, o)
+            (dX, dY, dO) = get_red_speed(dX, dY, dO)
+            (aX, aY, aO) = get_red_acceleration(aX, aY, aO)
         return [x, y, o, dX, dY, dO, aX, aY, aO]
     
     def generic_move(self, obj_dX, obj_dY, obj_dO, weight, isRobot):
@@ -61,7 +75,7 @@ class Field:
         self.last_robot_touch_ball = None
     
     def __str__(self):
-        text = "FIELD DESCRIPTION \n"
+        text = "FIELD DESCRIPTION (Blue team ref) \n"
         text += "Ball: \n" + self.ball.obs()
         text += "Blue team : \n"
         text += "Robot 1: \n " + self.robots[0].obs()
@@ -88,22 +102,22 @@ class Field:
         #COLLISION : Thales theorem with the small distance and good one
         x, y = abs(x1-x2), abs(y1-y2)
         if x == 0:
-            dx = 0
-            dy = (correctDist - y)/2
+            dX = 0
+            dY = (correctDist - y)/2
         else:
             angle = atan(y/x)
-            dx = (cos(angle) * correctDist - x)/2
-            dy = (sin(angle) * correctDist - y)/2
+            dX = (cos(angle) * correctDist - x)/2
+            dY = (sin(angle) * correctDist - y)/2
             s = -1
         if(x1<x2):
             s = 1
-        x1 -= dx * s
-        x2 += dx * s
+        x1 -= dX * s
+        x2 += dX * s
         s = -1
         if(y1<y2):
             s = 1
-        y1 -= dy * s
-        y2 += dy * s
+        y1 -= dY * s
+        y2 += dY * s
         return x1, y1, x2, y2
     
     def is_ball_out(self):
@@ -119,13 +133,19 @@ class Field:
             (x < -FIELD_WIDTH/2 or x > FIELD_WIDTH/2)
                 and y > Y_BUT-FIELD_HEIGHT/2  and y < FIELD_HEIGHT/2-Y_BUT ) # ball out of the field in one cage
             
-    def obs(self):
-        return [self.robots[0].obs(),
-                self.robots[1].obs(),
-                self.robots[2].obs(),
-                self.robots[3].obs(),
-                self.ball.obs()]
-        
+    def obs(self, team):
+        if team == 'blue':    
+            return [self.ball.obs(team),
+                    self.robots[0].obs(team),
+                    self.robots[1].obs(team),
+                    self.robots[2].obs(team),
+                    self.robots[3].obs(team)]
+        return [self.ball.obs(team),
+                self.robots[2].obs(team),
+                self.robots[3].obs(team),
+                self.robots[0].obs(team),
+                self.robots[1].obs(team)]
+            
     def get_winner(self):
         if not self.is_finished():
             return None
@@ -136,15 +156,18 @@ class Field:
         
     def step(self, actions, team):
         # Execute one time step within the environment
-        (dx1, dy1, do1, kick1, dx2, dy2, do2, kick2) = actions
-        
+        (dX1, dY1, dO1, kick1, dX2, dY2, dO2, kick2) = actions
+        if team == 'red':
+            dX1, dY1, dO1 = get_red_speed(dX1, dY1, dO1)
+            dX2, dY2, dO2 = get_red_speed(dX2, dY2, dO2)
+            
         # update directive
         if team == 'blue':
-            self.robots[0].move(dx1, dy1, do1)
-            self.robots[1].move(dx2, dy2, do2)
+            self.robots[0].move(dX1, dY1, dO1)
+            self.robots[1].move(dX2, dY2, dO2)
         else:
-            self.robots[2].move(dx1, dy1, do1)
-            self.robots[3].move(dx2, dy2, do2)
+            self.robots[2].move(dX1, dY1, dO1)
+            self.robots[3].move(dX2, dY2, dO2)
         self.ball.move()
         # collision here...
         collision = 0
@@ -178,28 +201,32 @@ class Field:
                 # Lets moove on the robot base
                 self.last_robot_touch_ball = robot
                 #
-                (_x1, _y1, _o1) = 0, 0, 0
+                (_x1, _y1, _o1) = (0, 0, 0)
                 (_x, _y, _o) = (x-x1, y-y1, o-o1)
-                angle = degrees(atan(_y/_x))
-                if angle < KICKER_O1 and angle > - KICKER_O1: 
+                
+                angle = 90 * np.sign(_y)
+                if _x != 0:
+                    angle = degrees( atan(_y/_x) ) 
+                
+                if False and -KICKER_O1 < angle and angle < KICKER_O1: 
                     # FRONT
-                    _dx, _dy = abs(x-x1), abs(y-y1)
-                    if _dx == 0:
-                        dx = 0
-                        dy = (correctDist - y)/2
+                    _dX, _dY = abs(x-x1), abs(y-y1)
+                    if _dX == 0:
+                        dX = 0
+                        dY = (correctDist - y)/2
                     else:
-                        angle = atan(_dy/_dx)
-                        dx = (cos(angle) * correctDist - _dx)
-                        dy = (sin(angle) * correctDist - _dy)
-                    self.ball.coord = (x+dx, y+dy, o)
+                        angle = atan(_dY/_dX)
+                        dX = (cos(angle) * correctDist - _dX)
+                        dY = (sin(angle) * correctDist - _dY)
+                    self.ball.coord = (x+dX, y+dY, o)
                     self.ball.actualSpeed = robot.actualSpeed
                 else: 
-                    
                     # Boing
                     (dX, dY, dO) = self.ball.actualSpeed # direction
+                    self.ball.actualSpeed = (-dX, -dY, dO)
                 
                 break
-        # Ball is out of field ?
+        # Is the ball out of field ?
         out = 0
         if self.is_ball_out():
             # RESET
@@ -207,10 +234,10 @@ class Field:
                 out = 1
             self.reset('classic')
         # Results
-        observation = self.obs()
+        observation = self.obs(team)
         reward = STEP_REWARD + collision * COLLISION_REWARD + out * TROUGHT_BALL_OUT_REWARD 
-        done = self.is_finished()
-        return observation, reward, done, self
+        dOne = self.is_finished()
+        return observation, reward, dOne, self
         
 class Robot(Movable):
     def __init__(self, x, y, o, color, number):
