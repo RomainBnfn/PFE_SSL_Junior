@@ -1,6 +1,6 @@
 from socker_render import SockerRender
 from socker_constants import *
-from math import dist, atan, degrees, cos, sin
+from math import dist, atan, degrees, cos, sin, pi
 import numpy as np
 
 def get_red_pos(x, y, o):
@@ -206,9 +206,12 @@ class Field:
                 
                 angle = 90 * np.sign(_y)
                 if _x != 0:
-                    angle = degrees( atan(_y/_x) ) 
-                
-                if False and -KICKER_O1 < angle and angle < KICKER_O1: 
+                    if _x < 0:
+                        angle = degrees( pi - atan(_y *1.0/_x) )
+                    else:
+                        angle = degrees( atan(_y *1.0/_x) )
+                angle = angle % 360
+                if 360-KICKER_O1 < angle or angle < KICKER_O1:
                     # FRONT
                     _dX, _dY = abs(x-x1), abs(y-y1)
                     if _dX == 0:
@@ -222,8 +225,21 @@ class Field:
                     self.ball.actualSpeed = robot.actualSpeed
                 else: 
                     # Boing
-                    (dX, dY, dO) = self.ball.actualSpeed # direction
-                    self.ball.actualSpeed = (-dX, -dY, dO)
+                    # Angle between vect ball, robot & speed
+                    # Speed --> cos(a) dx + sin(a) dy
+                    #       --> sin(a) dx + cos(a) dy et dO
+                    vect_ballrobot = [x1-x, y1-y]
+                    (dX, dY, dO) = self.ball.actualSpeed
+                    vect_speed = [dX, dY]
+
+                    vect_ballrobot = vect_ballrobot / np.linalg.norm(vect_ballrobot)
+                    vect_speed = vect_speed / np.linalg.norm(vect_speed)
+                    dot_product = np.dot(vect_ballrobot, vect_speed)
+                    angle = np.arccos(dot_product)
+                    cosa = cos(angle)
+                    sina = sin(angle)
+                    # TODO
+                    self.ball.actualSpeed = ( -cosa * dX + sina * dY,  - cosa * dX + sina * dY, dO)
                 
                 break
         # Is the ball out of field ?

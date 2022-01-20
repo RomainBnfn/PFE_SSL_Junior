@@ -48,7 +48,9 @@ class SockerEnvironement(gym.Env):
         return self._sockerRender
     
 test = SockerEnvironement('blue')
-test.field.ball.actualSpeed = (200, 100, 180)
+test.field.ball.coord = (-150, 40, 0)
+test.field.ball.actualSpeed = (150, 0, 0)
+test.field.robots[0].coord = (0, 0, 0)
 import time
 done = False
 for i in range(60):
