@@ -1,5 +1,12 @@
 from math import atan, degrees
 
+# Images
+FIELD_IMAGE_PATH = "assets\\images\\croped_field.png"
+ROBOT_RED_1_MARKER_IMAGE = "red-marker-1.png"
+ROBOT_RED_2_MARKER_IMAGE = "red-marker-2.png"
+ROBOT_BLUE_1_MARKER_IMAGE = "blue-marker-1.png"
+ROBOT_BLUE_2_MARKER_IMAGE = "blue-marker-2.png"
+
 # REWARD CONSTANT
 STEP_REWARD = -1
 COLLISION_REWARD = -30

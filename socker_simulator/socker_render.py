@@ -14,9 +14,11 @@ class SockerRender:
         pygame.font.init()
         self._screen = None
         # Load field image
-        self.field_image = pygame.image.load("assets\\images\\croped_field.png")
+        self.field_image = pygame.image.load(FIELD_IMAGE_PATH)
         self.field_image = pygame.transform.rotate(self.field_image, 90)
-        self.field_image = pygame.transform.scale(self.field_image, (SCREEN_WIDTH-BORDER, SCREEN_HEIGHT-BORDER))
+        self.field_image = pygame.transform.scale(self.field_image, 
+                                                  (SCREEN_WIDTH-BORDER,
+                                                   SCREEN_HEIGHT-BORDER))
         # Load robot images 
         def loadImage(imageName, size):
             image = pygame.image.load("assets\\images\\" + imageName)
@@ -24,10 +26,14 @@ class SockerRender:
         #
         new_size = fromMMtoPixel_dist(ROBOT_MARK)
         self.colorImageDic = {
-            ('red', 1) : ((255, 0, 0), loadImage("red-marker-1.png", new_size)),
-            ('red', 2) : ((255, 0, 0), loadImage("red-marker-2.png", new_size)),
-            ('blue', 1) : ((0, 0, 255), loadImage("blue-marker-1.png", new_size)),
-            ('blue', 2) : ((0, 0, 255), loadImage("blue-marker-2.png", new_size)),
+            ('red', 1) : ((255, 0, 0), loadImage(ROBOT_RED_1_MARKER_IMAGE,
+                                                 new_size)),
+            ('red', 2) : ((255, 0, 0), loadImage(ROBOT_RED_2_MARKER_IMAGE, 
+                                                 new_size)),
+            ('blue', 1) : ((0, 0, 255), loadImage(ROBOT_BLUE_1_MARKER_IMAGE,
+                                                  new_size)),
+            ('blue', 2) : ((0, 0, 255), loadImage(ROBOT_BLUE_2_MARKER_IMAGE,
+                                                  new_size)),
         }
         
     def render(self, field):

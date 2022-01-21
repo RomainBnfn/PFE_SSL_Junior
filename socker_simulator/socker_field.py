@@ -238,8 +238,9 @@ class Field:
                     angle = np.arccos(dot_product)
                     cosa = cos(angle)
                     sina = sin(angle)
+                    self.ball.actualSpeed = (-dX, -dY, dO)
                     # TODO
-                    self.ball.actualSpeed = ( -cosa * dX + sina * dY,  - cosa * dX + sina * dY, dO)
+                    #self.ball.actualSpeed = ( -cosa * dX + sina * dY,  - cosa * dX + sina * dY, dO)
                 
                 break
         # Is the ball out of field ?
