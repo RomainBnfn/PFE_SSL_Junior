@@ -90,7 +90,7 @@ class Field:
                         Robot(X_POS, -Y_POS, 180, 'blue', 2),
                         Robot(-X_POS, Y_POS, 0, 'red', 1),
                         Robot(-X_POS, -Y_POS, 0, 'red', 2)]
-            self.ball = Ball(0, 0)
+            self.ball = Ball(0, 0)   
         # ...
         else:
             raise ValueError('Unknown "'+ mode+'" mode for reset.')
@@ -253,8 +253,8 @@ class Field:
         # Results
         observation = self.obs(team)
         reward = STEP_REWARD + collision * COLLISION_REWARD + out * TROUGHT_BALL_OUT_REWARD 
-        dOne = self.is_finished()
-        return observation, reward, dOne, self
+        done = self.is_finished()
+        return observation, reward, done, self
         
 class Robot(Movable):
     def __init__(self, x, y, o, color, number):

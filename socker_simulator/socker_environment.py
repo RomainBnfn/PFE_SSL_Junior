@@ -36,10 +36,13 @@ class SockerEnvironement(gym.Env):
         return self.field.step(actions, self.team)
         
     def reset(self):
-        self.field.reset('classic')
-    
+        return self.field.reset('classic')
+
     def render(self, mode='human', close=False):
         self.sockerRender.render(self.field)
+
+    def obs(self, team="blue"):
+        return self.field.obs(team)
     
     @property
     def sockerRender(self):
