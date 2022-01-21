@@ -44,8 +44,8 @@ env = SockerEnvironement('blue')
 env.reset()
 done = false
 while not done:
-    new_state, reward, done, _ = env.step([ 0,  100, 0, 0,   #action robot 1
-                                            0, -100, 0, 0 ]) # action robot 2
+    new_state, reward, done, _ = env.step([ 0,  100, 0, 0,   # actions robot 1
+                                            0, -100, 0, 0 ]) # actions robot 2
     env.render() # Pour afficher le terrain (optionnel)
     time.sleep(TIME_STEP)
 print("Partie terminée !")
@@ -68,7 +68,7 @@ A la fin de chaque step, les différents configuration de jeu (fin de jeu, balle
 
 ## 2.2. IA DPPG
 
-(à compléter)
+(à compléter) Fonctionnement & choix 
 
 # 3. Démonstrations & résulats
 
@@ -84,3 +84,5 @@ A la fin de chaque step, les différents configuration de jeu (fin de jeu, balle
 ## 4.1. Simulateur
 
 Le simulateur permet d'entrainer l'IA. Plus le simulateur est proche de la réalité plus l'IA sera performante et controlera correctement les robots. Afin de pouvoir lancer un entrainement avant la fin du projet, certains comportement physiques n'ont pas été réaliser correctement (collision balle/robot, force du moteur du robot). De fait, amélioration ce simulateur permettrait grandement d'améliorer les performances des robots sur le monde réél. 
+
+D'autres règles et comportement peuvent être ajouter pour coller à un fonctionement plus réaliste, notamment le scénario lors d'une sortie de balle. Pour le moment si un robot sort la balle du terrain, il est 'punni' par une reward négatif et les robots et la balle sont repositionnés comme au début du match. Cela est à modifié dans la fonction `step` du socker_field pour adapter au scénario réel. 
