@@ -1,5 +1,5 @@
 # SSL Junior ~ Enseirb IA
-Ce projet a été réalisé dans le cadre d'un projet semestriel au semestre 9 de l'ENSEIRB en fillière IA par [Romain Bonnefon](rbonnefon@ensc.fr) et [Mohamed Kouhou](mohamedkouhou@gmail.com). Le but était de réaliser une IA par machine learning permettant de controler les 2 robots d'une équipe de SSL Socker Junior pour la compétition Robocup. (Plus de détails sur le contexte du projet dans le rapport (`nom_rapport.pdf`). 
+Ce projet a été réalisé dans le cadre d'un projet semestriel au semestre 9 de l'ENSEIRB en fillière IA par [Romain Bonnefon](rbonnefon@ensc.fr) et [Mohamed Kouhou](https://github.com/KouhouMed). Le but était de réaliser une IA par machine learning permettant de controler les 2 robots d'une équipe de SSL Socker Junior pour la compétition Robocup. (Plus de détails sur le contexte du projet dans le rapport (`nom_rapport.pdf`). 
 
 Afin de permettre l'entrainement de cette IA, un simulateur `gym.env` a été réalisé; l'IA quant à elle a été réalisé en suivant l'architecture DPPG (voir nos choix sur le rapport).
 
