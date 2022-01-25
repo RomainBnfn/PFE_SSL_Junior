@@ -29,7 +29,6 @@ for episode in range(50):
         
         state = new_state
         episode_reward += reward
-        print(state)
 
         if done:
             sys.stdout.write("episode: {}, reward: {}, average reward: {} \n". format(episode, np.round(episode_reward, decimals=2), np.mean(rewards[-10:])))
