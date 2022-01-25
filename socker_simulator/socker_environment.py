@@ -1,8 +1,8 @@
 import gym
 from gym import spaces
-from socker_constants import *
-from socker_render import SockerRender
-from socker_field import Field
+from socker_simulator.socker_constants import *
+from socker_simulator.socker_render import SockerRender
+from socker_simulator.socker_field import Field
 import numpy as np
 
 class SockerEnvironement(gym.Env):

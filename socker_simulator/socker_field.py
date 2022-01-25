@@ -1,5 +1,5 @@
-from socker_render import SockerRender
-from socker_constants import *
+from socker_simulator.socker_render import SockerRender
+from socker_simulator.socker_constants import *
 from math import dist, atan, degrees, cos, sin, pi
 import numpy as np
 

@@ -1,6 +1,6 @@
 import pygame
 from math import cos, sin, radians
-from socker_constants import *
+from socker_simulator.socker_constants import *
 
 RATIO_MM_PIXEL = FIELD_HEIGHT/(SCREEN_WIDTH-BORDER)
 def fromMMtoPixel_coord(x, y):  
