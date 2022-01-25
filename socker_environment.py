@@ -50,14 +50,14 @@ class SockerEnvironement(gym.Env):
             self._sockerRender = SockerRender()
         return self._sockerRender
     
-test = SockerEnvironement('blue')
-test.field.ball.coord = (-150, 40, 0)
-test.field.ball.actualSpeed = (150, 0, 0)
-test.field.robots[0].coord = (0, 0, 0)
-import time
-done = False
-for i in range(60):
-    test.render()
-    obs, reward, done, _ = test.step( [0, 0, 0, 0,
-                                        0, 0, 0, 0] )
-    time.sleep(TIME_STEP)
+# test = SockerEnvironement('blue')
+# test.field.ball.coord = (-150, 40, 0)
+# test.field.ball.actualSpeed = (150, 0, 0)
+# test.field.robots[0].coord = (0, 0, 0)
+# import time
+# done = False
+# for i in range(60):
+#     test.render()
+#     obs, reward, done, _ = test.step( [0, 0, 0, 0,
+#                                         0, 0, 0, 0] )
+#     time.sleep(TIME_STEP)

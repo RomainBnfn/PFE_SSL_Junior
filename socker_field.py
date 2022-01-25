@@ -108,7 +108,7 @@ class Field:
             angle = atan(y/x)
             dX = (cos(angle) * correctDist - x)/2
             dY = (sin(angle) * correctDist - y)/2
-            s = -1
+        s = -1
         if(x1<x2):
             s = 1
         x1 -= dX * s
