@@ -1,7 +1,7 @@
 import sys 
 from model import DDPG
 from utils import *
-from socker_environment import *
+from socker_simulator.socker_environment import *
 
 env = SockerEnvironement('blue')
 
@@ -17,8 +17,7 @@ for episode in range(50):
     state = np.concatenate(np.array(state), axis=None)
     episode_reward = 0
 
-    done = False
-    while not done:
+    for step in range(50):
         action = agent.get_action(state)
         new_state, reward, done, _ = env.step(action)
         new_state = torch.flatten(torch.tensor(new_state))
