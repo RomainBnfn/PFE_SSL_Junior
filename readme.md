@@ -70,7 +70,7 @@ A la fin de chaque step, les différents configuration de jeu (fin de jeu, balle
 
 C'est la partie susceptible d'apprendre aux agents (robots) de prendre des décisions "intelligentes" en se basant sur les observations du terrain. **Deep Deterministic Policy Gradient (DDPG)** est une technique d'apprentissage par renforcement qui combine à la fois le Q-learning et les *Policy gradients*. Le DDPG se compose de deux réseaux :
 - **Acteur** : prend l'observation en entrée et produit l'action exacte (continue), au lieu d'une distribution de probabilité sur les actions (comme en DQN par exemple)
-- **Critique** : c'est un réseau de *Q-value* qui prend en entrée l'observation et l'action et produit la Q-value ($$Q(s,a)$$ est une mesure de la récompense globale attendue en supposant que l'agent est dans l'état $s$ et effectue l'action $$a$$)
+- **Critique** : c'est un réseau de *Q-value* qui prend en entrée l'observation et l'action et produit la Q-value (Q(s,a) est une mesure de la récompense globale attendue en supposant que l'agent est dans l'état $s$ et effectue l'action a)
 
 # 3. Démonstrations & résulats
 
