@@ -1,7 +1,7 @@
 # SSL Junior ~ Enseirb IA
 Ce projet a été réalisé dans le cadre d'un projet semestriel au semestre 9 de l'ENSEIRB en fillière IA par [Romain Bonnefon](https://github.com/RomainBnfn) et [Mohamed Kouhou](https://github.com/KouhouMed). Le but était de réaliser une IA par machine learning permettant de controler les 2 robots d'une équipe de SSL Socker Junior pour la compétition Robocup. (Plus de détails sur le contexte du projet dans le rapport (`nom_rapport.pdf`). 
 
-Afin de permettre l'entrainement de cette IA, un simulateur `gym.env` a été réalisé; l'IA quant à elle a été réalisé en suivant l'architecture DPPG (voir nos choix sur le rapport).
+Afin de permettre l'entrainement de cette IA, un simulateur `gym.env` a été réalisé; l'IA quant à elle a été réalisé en suivant l'architecture DDPG (voir nos choix sur le rapport).
 
 # 1. Installation
 
@@ -66,9 +66,11 @@ Les **collisions** sont gérées après le déplacement de chaque objet, si deux
 
 A la fin de chaque step, les différents configuration de jeu (fin de jeu, balle hors du terrain...) sont regardées et le reward renvoyé au modèle est ajusté. Chaque type de faute/bonne action est associé à un reward défini dans le fichier des constantes. 
 
-## 2.2. IA DPPG
+## 2.2. IA DDPG
 
-(à compléter) Fonctionnement & choix 
+C'est la partie susceptible d'apprendre aux agents (robots) de prendre des décisions "intelligentes" en se basant sur les observations du terrain. **Deep Deterministic Policy Gradient (DDPG)** est une technique d'apprentissage par renforcement qui combine à la fois le Q-learning et les *Policy gradients*. Le DDPG se compose de deux réseaux :
+- **Acteur** : prend l'observation en entrée et produit l'action exacte (continue), au lieu d'une distribution de probabilité sur les actions (comme en DQN par exemple)
+- **Critique** : c'est un réseau de *Q-value* qui prend en entrée l'observation et l'action et produit la Q-value ($Q(s,a)$ est une mesure de la récompense globale attendue en supposant que l'agent est dans l'état $s$ et effectue l'action $a$)
 
 # 3. Démonstrations & résulats
 
@@ -77,7 +79,7 @@ A la fin de chaque step, les différents configuration de jeu (fin de jeu, balle
 (images)
 (gif)
 
-## 3.2. DPPG : Comportements des robots
+## 3.2. DDPG : Comportements des robots
 
 # 4. Pistes d'améliorations
 
