@@ -70,7 +70,15 @@ A la fin de chaque step, les différents configuration de jeu (fin de jeu, balle
 
 C'est la partie susceptible d'apprendre aux agents (robots) de prendre des décisions "intelligentes" en se basant sur les observations du terrain. **Deep Deterministic Policy Gradient (DDPG)** est une technique d'apprentissage par renforcement qui combine à la fois le Q-learning et les *Policy gradients*. Le DDPG se compose de deux réseaux :
 - **Acteur** : prend l'observation en entrée et produit l'action exacte (continue), au lieu d'une distribution de probabilité sur les actions (comme en DQN par exemple)
-- **Critique** : c'est un réseau de *Q-value* qui prend en entrée l'observation et l'action et produit la Q-value (Q(s,a) est une mesure de la récompense globale attendue en supposant que l'agent est dans l'état $s$ et effectue l'action a)
+- **Critique** : c'est un réseau qui prend en entrée l'observation et l'action et produit la Q-value Q(s,a) (une mesure de la récompense globale attendue en supposant que l'agent est dans l'état s et effectue l'action a)
+
+### 2.2.1. Architecture du modèle DDPG
+
+Le fichier `model.py` contient les 3 classes suivantes :
+- `Actor` : un réseau de neuronnes à une couche cachée qui représente l'*Acteur*
+- `Critic` : un réseau de neuronnes à une couche cachée qui représente le *Critique*
+- `DDPG` : on y instancie chacun des deux réseaux deux fois ; une copie originale (`actor` et `critic`) et une autre copie cible (`actor_target` et `critic_target`). les *target networs* sont des copies temporisées de leurs réseaux d'origine qui suivent lentement les réseaux appris. L'utilisation de ces réseaux améliore considérablement la stabilité de l'apprentissage. Le réseau Critic est mis à jour de la même manière que dans Q-learning. La *Q-value* mise à jour est obtenue par l'équation de Bellman. Mais, les Q-values des états suivants sont calculées avec le `actor_target` et le `critic_target`. Ensuite, nous minimisons la perte quadratique moyenne (*Mean Squared Error*) entre la nouvelle Q-value et la Q-value d'origine (celle-ci est calculée à l'aide le `critic`).
+
 
 # 3. Démonstrations & résulats
 
