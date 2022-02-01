@@ -79,6 +79,10 @@ Le fichier `model.py` contient les 3 classes suivantes :
 - `Critic` : un réseau de neuronnes à une couche cachée qui représente le *Critique*
 - `DDPG` : on y instancie chacun des deux réseaux deux fois ; une copie originale (`actor` et `critic`) et une autre copie cible (`actor_target` et `critic_target`). les *target networs* sont des copies temporisées de leurs réseaux d'origine qui suivent lentement les réseaux appris. L'utilisation de ces réseaux améliore considérablement la stabilité de l'apprentissage. Le réseau Critic est mis à jour de la même manière que dans Q-learning. La *Q-value* mise à jour est obtenue par l'équation de Bellman. Mais, les Q-values des états suivants sont calculées avec le `actor_target` et le `critic_target`. Ensuite, nous minimisons la perte quadratique moyenne (*Mean Squared Error*) entre la nouvelle Q-value et la Q-value d'origine (celle-ci est calculée à l'aide le `critic`).
 
+### 2.2.2. Sauvegarde et relecture des expériences 
+
+DDPG utilise un tampon de relecture pour échantillonner l'expérience afin de mettre à jour les paramètres du réseau de neuronnes. Lors de chaque épisode, nous sauvegardons tous les tuples d'expérience (état, action, récompense, état suivant) et les stockons dans un cache de taille finie (`memory`). Ensuite, nous échantillonnons des mini batchs d'expérience aléatoires à partir du tampon lorsque nous mettons à jour les actors et critics.
+
 
 # 3. Démonstrations & résulats
 
